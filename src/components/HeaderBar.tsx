@@ -2,7 +2,7 @@
 import React from "react";
 import { View, Text, Switch, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { icons } from "@/constants/svg";
+import { icons } from "../constants/svg";
 
 const HeaderBar = ({
   userName,

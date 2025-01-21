@@ -1,10 +1,9 @@
-import { useOAuth } from "@clerk/clerk-expo";
-import { router } from "expo-router";
-import { Alert, Image, Text, View } from "react-native";
-
-import CustomButton from "@/components/CustomButton";
-import { icons } from "@/constants";
-import { googleOAuth } from "@/lib/auth";
+import React from 'react';
+import { Alert, Image, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import CustomButton from '../components/CustomButton';
+import { icons } from '../constants';
+import { googleOAuth } from '../lib/auth';
 
 const OAuth = () => {
   const { startOAuthFlow } = useOAuth({ strategy: "oauth_google" });

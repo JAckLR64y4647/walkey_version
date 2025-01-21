@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -6,14 +6,13 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
-} from "react-native";
-
+} from 'react-native';
 
 interface BreedSelectorProps {
-  items: { label: string; value: string }[]; 
+  items: { label: string; value: string }[];
   placeholder: string;
-  value: string; 
-  onChangeValue: (value: string) => void; 
+  value: string;
+  onChangeValue: (value: string) => void;
 }
 
 const BreedSelector: React.FC<BreedSelectorProps> = ({
@@ -22,13 +21,12 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({
   value,
   onChangeValue,
 }) => {
-  const [inputValue, setInputValue] = useState(value || ""); 
-  const [filteredItems, setFilteredItems] = useState(items); 
+  const [inputValue, setInputValue] = useState(value || '');
+  const [filteredItems, setFilteredItems] = useState(items);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (inputValue) {
-   
       const filtered = items.filter((item) =>
         item.label.toLowerCase().includes(inputValue.toLowerCase())
       );
@@ -40,7 +38,6 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({
 
   return (
     <View style={styles.container}>
-  
       <TextInput
         value={inputValue}
         placeholder={placeholder}
@@ -50,11 +47,10 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({
           setIsOpen(true);
           onChangeValue && onChangeValue(text);
         }}
-        onFocus={() => setIsOpen(true)} 
+        onFocus={() => setIsOpen(true)}
         style={styles.input}
       />
 
-  
       {isOpen && (
         <View style={styles.dropDown}>
           <FlatList
@@ -64,9 +60,9 @@ const BreedSelector: React.FC<BreedSelectorProps> = ({
               <TouchableOpacity
                 style={styles.dropDownItem}
                 onPress={() => {
-                  setInputValue(item.label); 
-                  setIsOpen(false); 
-                  onChangeValue(item.value); 
+                  setInputValue(item.label);
+                  setIsOpen(false);
+                  onChangeValue(item.value);
                 }}
               >
                 <Text style={styles.dropDownText}>{item.label}</Text>
@@ -84,45 +80,45 @@ export default BreedSelector;
 
 const styles = StyleSheet.create({
   container: {
-    position: "relative",
-    width: "100%",
+    position: 'relative',
+    width: '100%',
   },
   input: {
     borderWidth: 2,
-    borderColor: "black",
+    borderColor: 'black',
     borderRadius: 8,
     padding: 10,
     fontSize: 18,
-    color: "black",
+    color: 'black',
   },
   dropDown: {
-    position: "absolute",
+    position: 'absolute',
     top: 50,
     left: 0,
     right: 0,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 8,
     zIndex: 10,
-    maxHeight: 200, 
-    boxShadow: "#000", 
+    maxHeight: 200,
+    boxShadow: '#000',
     shadowOffset: {
       width: 0,
       height: 4,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4.65,
-    elevation: 8, 
+    elevation: 8,
   },
   flatList: {
-    flexGrow: 0, 
+    flexGrow: 0,
   },
   dropDownItem: {
     padding: 10,
-    //borderBottomWidth: 1,
-    borderBottomColor: "#e5e5e5",
+    borderBottomColor: '#e5e5e5',
   },
   dropDownText: {
     fontSize: 16,
-    color: "black",
+    color: 'black',
   },
 });
+

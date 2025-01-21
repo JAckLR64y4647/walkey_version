@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import DropDownPicker, { DropDownPickerProps } from "react-native-dropdown-picker";
+import React, { useState, useEffect } from 'react';
+import DropDownPicker, { DropDownPickerProps } from 'react-native-dropdown-picker';
 
 type CustomDropDownPickerProps<T extends string | number | boolean> = DropDownPickerProps<T> & {
   placeholder?: string;
@@ -7,13 +7,12 @@ type CustomDropDownPickerProps<T extends string | number | boolean> = DropDownPi
 };
 
 const CustomDropDownPicker = <T extends string | number | boolean>({
-  placeholder = "Выберите значение",
+  placeholder = 'Выберите значение',
   searchable = false, 
   ...props
 }: CustomDropDownPickerProps<T>) => {
-  const [inputValue, setInputValue] = useState(""); 
+  const [inputValue, setInputValue] = useState(''); 
   const [filteredItems, setFilteredItems] = useState(props.items || []); 
-
 
   useEffect(() => {
     if (searchable) {
@@ -31,26 +30,26 @@ const CustomDropDownPicker = <T extends string | number | boolean>({
       placeholder={placeholder}
       maxHeight={200}
       style={{
-        backgroundColor: "transparent",
-        borderColor: "transparent",
+        backgroundColor: 'transparent',
+        borderColor: 'transparent',
         paddingHorizontal: 10,
         borderWidth: 0,
       }}
       placeholderStyle={{
-        color: "black",
+        color: 'black',
         fontSize: 18,
-        fontWeight: "bold",
-        textAlign: "left",
+        fontWeight: 'bold',
+        textAlign: 'left',
       }}
       textStyle={{
         fontSize: 18,
-        fontWeight: "bold",
-        color: "black",
+        fontWeight: 'bold',
+        color: 'black',
       }}
       dropDownContainerStyle={{
         borderWidth: 0,
-        backgroundColor: "white",
-        boxShadow: "rgba(0, 0, 0, 0.1)",
+        backgroundColor: 'white',
+        boxShadow: 'rgba(0, 0, 0, 0.1)',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
@@ -58,19 +57,19 @@ const CustomDropDownPicker = <T extends string | number | boolean>({
       }}
       listItemLabelStyle={{
         fontSize: 18,
-        fontWeight: "400",
+        fontWeight: '400',
         paddingVertical: 10,
       }}
       selectedItemContainerStyle={{
-        backgroundColor: "#f0f0f0",
+        backgroundColor: '#f0f0f0',
       }}
       arrowIconStyle={{
         width: 20,
         height: 20,
       }}
       arrowIconContainerStyle={{
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
       showTickIcon={false}
       {...props}
@@ -79,14 +78,14 @@ const CustomDropDownPicker = <T extends string | number | boolean>({
         searchable
           ? {
               style: {
-                height: "100%",
-                color: "black",
+                height: '100%',
+                color: 'black',
                 fontSize: 18,
                 paddingHorizontal: 10,
               },
               value: inputValue,
               placeholder: placeholder,
-              placeholderTextColor: "gray",
+              placeholderTextColor: 'gray',
               onChangeText: setInputValue, 
             }
           : undefined

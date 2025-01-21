@@ -1,4 +1,4 @@
-import { Ride } from "@/types/type";
+import { Ride } from "../types/type";
 import { View, Text } from "react-native";
 
 const RideCard = ({ ride }: { ride: Ride }) => (
