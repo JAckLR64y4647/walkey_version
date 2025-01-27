@@ -1,6 +1,4 @@
-import {TextInputProps, TouchableOpacityProps} from "react-native";
-
-declare interface OtherDog {
+export interface OtherDog {
     other_dog_id: number;
     first_name: string;
     last_name: string;
@@ -9,7 +7,20 @@ declare interface OtherDog {
     rating: number;
 }
 
-declare interface MarkerData {
+export interface SignUpForm {
+    name: string;
+    email: string;
+    password: string;
+    gender: string;
+    birthDay: string;
+    birthMonth: string;
+    birthYear: string;
+    breed: string;
+    image: string | null;
+    activityLevel: number;
+}
+
+export interface MarkerData {
     latitude: number;
     longitude: number;
     id: number;
@@ -22,7 +33,7 @@ declare interface MarkerData {
     time?: number;
 }
 
-declare interface MapProps {
+export interface MapProps {
     destinationLatitude?: number;
     destinationLongitude?: number;
     onOtherDogTimesCalculated?: (otherDogsWithTimes: MarkerData[]) => void;
@@ -30,7 +41,7 @@ declare interface MapProps {
     onMapReady?: () => void;
 }
 
-declare interface Ride {
+export interface Ride {
     origin_address: string;
     destination_address: string;
     origin_latitude: number;
@@ -47,7 +58,7 @@ declare interface Ride {
     };
 }
 
-declare interface ButtonProps extends TouchableOpacityProps {
+export interface ButtonProps extends TouchableOpacityProps {
     title: string;
     bgVariant?: "primary" | "secondary" | "danger" | "success" | "outline" | "orange";
     textVariant?: "primary" | "default" | "secondary" | "danger" | "success";
@@ -56,23 +67,15 @@ declare interface ButtonProps extends TouchableOpacityProps {
     className?: string;
 }
 
-declare interface GoogleInputProps {
+export interface GoogleInputProps {
     icon?: string;
     initialLocation?: string;
     containerStyle?: string;
     textInputBackgroundColor?: string;
-    handlePress: ({
-                      latitude,
-                      longitude,
-                      address,
-                  }: {
-        latitude: number;
-        longitude: number;
-        address: string;
-    }) => void;
+    handlePress: (params: { latitude: number; longitude: number; address: string }) => void;
 }
 
-declare interface InputFieldProps extends TextInputProps {
+export interface InputFieldProps extends TextInputProps {
     label: string;
     icon?: any;
     secureTextEntry?: boolean;
@@ -83,34 +86,18 @@ declare interface InputFieldProps extends TextInputProps {
     className?: string;
 }
 
-declare interface LocationStore {
+export interface LocationStore {
     userLatitude: number | null;
     userLongitude: number | null;
     userAddress: string | null;
     destinationLatitude: number | null;
     destinationLongitude: number | null;
     destinationAddress: string | null;
-    setUserLocation: ({
-                          latitude,
-                          longitude,
-                          address,
-                      }: {
-        latitude: number;
-        longitude: number;
-        address: string;
-    }) => void;
-    setDestinationLocation: ({
-                                 latitude,
-                                 longitude,
-                                 address,
-                             }: {
-        latitude: number;
-        longitude: number;
-        address: string;
-    }) => void;
+    setUserLocation: (params: { latitude: number; longitude: number; address: string }) => void;
+    setDestinationLocation: (params: { latitude: number; longitude: number; address: string }) => void;
 }
 
-declare interface OtherDogStore {
+export interface OtherDogStore {
     drivers: MarkerData[];
     selectedOtherDog: number | null;
     setSelectedOtherDog: (driverId: number) => void;
@@ -118,7 +105,7 @@ declare interface OtherDogStore {
     clearSelectedOtherDog: () => void;
 }
 
-declare interface OtherDogCardProps {
+export interface OtherDogCardProps {
     item: MarkerData;
     selected: number;
     setSelected: () => void;

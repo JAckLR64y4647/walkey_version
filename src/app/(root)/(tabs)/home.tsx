@@ -6,11 +6,9 @@ import { useUser } from '@clerk/clerk-expo';
 import { icons } from "@/constants/svg";
 import { images } from "@/constants/index";
 import { useNavigation } from '@react-navigation/native';
-import DogProfileModal from "@/app/(root)/(modal)/DogProfile";
+import DogProfileModal from "../../../app/(root)/(modal)/DogProfile";
 import { Dog, match_dogs, calculate_geographic_distance } from "@/dogMatching";
-import { getServerUrl } from "@/utils/getServerUrl";
-import HomeNotificationModal from "@/app/(root)/(modal)/HomeNotificationModal";
-import CreateWalkModal from "@/app/(root)/(modal)/CreateWalkModal";
+import CreateWalkModal from "../../../app/(root)/(modal)/CreateWalkModal";
 import * as Clipboard from 'expo-clipboard';
 
 const SERVER_URL = "https://799d-93-200-239-96.ngrok-free.app";
@@ -31,27 +29,6 @@ const fetchDataFromAPI = async (url: string, errorMessage: string): Promise<any>
 const windowWidth = Dimensions.get('window').width;
 
 const slideHeight = 200;
-
-const data = [
-  {
-    id: 1,
-    title: "Вакцинація",
-    subtitle: "Вакцина від сказу / Комплексна вакцина",
-    date: "Остання вакцина: 10 березня 2023",
-    nextDate: "Наступна вакцина: 10 березня 2024",
-    description: "Не забудьте підготувати медичну картку та взяти з собою всі необхідні документи на вакцинацію",
-    backgroundColor: "#E8F3F9"
-  },
-  {
-    id: 2,
-    title: "Ліки",
-    subtitle: "Протиглистовий засіб",
-    date: "Останній прийом: 8 жовтня 2023",
-    nextDate: "Наступний прийом: 10 жовтня 2024",
-    description: "Налаштуйте автоматичне нагадування до наступного прийому",
-    backgroundColor: "#E5EFE5"
-  }
-];
 
 const calculateDaysUntil = (nextDate: string | undefined): number | null => {
   if (!nextDate) return null;
@@ -688,12 +665,6 @@ const Home = () => {
     fetchData();
   }, [user]);
 
-
-  useEffect(() => {
-    console.log("Current dogs state:", dogs);
-  }, [dogs]);
-
-
   useEffect(() => {
     if (!isToggled && wasToggledOn.current) {
       navigation.navigate('WalkEndScreen');
@@ -703,10 +674,6 @@ const Home = () => {
   }, [isToggled]);
 
   const toggleSwitch = () => setIsToggled(!isToggled);
-
-  console.log("Собаки после расчета метчинга:", dogs);
-
-
 
   const formatBirthDate = (dateString: string): string => {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -853,21 +820,6 @@ const Home = () => {
             onClose={() => setWalkModalVisible(false)} 
           />
         </View>;
-
-
-
-        {/*<View className="flex-row justify-between mt-5">
-            <View className="bg-gray-100 rounded-lg p-4 flex-1 mr-2">
-              <Text className="font-bold">Емоції {userName}</Text>
-              <Text>Щасливий 95%</Text>
-            </View>
-            <View className="bg-gray-100 rounded-lg p-4 flex-1 ml-2">
-              <Text className="font-bold">Соціалізація {userName}</Text>
-              <Text>Дружелюбний 57%</Text>
-            </View>
-          </View>*/}
-
-
         <View className="mt-5">
           <View className="flex-row items-center">
             <Text className="font-bold text-[18px] mr-2">Нагадування</Text>

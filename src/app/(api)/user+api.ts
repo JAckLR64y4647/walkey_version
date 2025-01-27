@@ -23,9 +23,9 @@ export async function POST(request: Request) {
       !breed ||
       !activityLevel
     ) {
-      return Response.json(
-        { error: "Missing required fields" },
-        { status: 400 },
+      return new Response(
+        JSON.stringify({ error: "Missing required fields" }),
+        { status: 400 }
       );
     }
 
@@ -46,6 +46,9 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("Error creating user:", error);
-    return Response.json({ error: "Internal Server Error" }, { status: 500 });
+    return new Response(
+      JSON.stringify({ error: "Internal Server Error" }),
+      { status: 500 }
+    );
   }
 }

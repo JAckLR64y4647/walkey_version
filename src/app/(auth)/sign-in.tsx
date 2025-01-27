@@ -1,51 +1,52 @@
 import { useState } from "react";
 import { Text, View, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import InputField from "@/components/InputField";
-import { useSignIn } from "@clerk/clerk-expo";
-import { useRouter } from "expo-router";
-import { icons } from "@/constants/svg";
+import InputField from '../../components/InputField';
+import { useSignIn } from "@clerk/clerk-react";
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { icons } from "../../constants/svg";
+
+type RootStackParamList = {
+  Home: undefined;
+  SignUp: undefined;
+};
+
+type SignInNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
 const SignIn = () => {
-  const { isLoaded, signIn } = useSignIn();
-  const router = useRouter();
+  const { signIn } = useSignIn() || {};
+  const navigation = useNavigation<SignInNavigationProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSignIn = async () => {
-    if (!isLoaded) return;
-
-    if (!email || !password) {
-      Alert.alert("Помилка", "Будь ласка, введіть email та пароль.");
+    if (!email || !password || !signIn) {
+      Alert.alert("Помилка", email && password ? "Неможливо авторизуватися. Попробуйте ще раз." : "Будь ласка, введіть email та пароль.");
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
-      const result = await signIn.create({
-        identifier: email,
-        password,
-      });
-
-      if (result.status === "complete") {
-        Alert.alert("Успіх", "Вхід виконано успішно.");
-        router.push("/(root)/(tabs)/home");
-      } else {
-        Alert.alert("Помилка", "Невірні дані для входу.");
-      }
-    } catch (error) {
+      const result = await signIn.create({ identifier: email, password });
+      Alert.alert(result.status === "complete" ? "Успіх" : "Помилка", result.status === "complete" ? "Вхід виконано успішно." : "Невірні дані для входу.");
+      if (result.status === "complete") navigation.navigate('Home');
+    } catch {
       Alert.alert("Помилка", "Щось пішло не так. Перевірте ваші дані.");
     } finally {
       setLoading(false);
     }
   };
+  
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-1 justify-center px-5">
-        <Text className="text-2xl font-JakartaSemiBold text-black mb-5 left-5">Вхід</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ flex: 1, justifyContent: 'center', paddingHorizontal: 20 }}>
+        <Text style={{ fontSize: 24, fontWeight: '600', color: 'black', marginBottom: 20 }}>
+          Вхід
+        </Text>
 
         <InputField
           label="Email"
@@ -71,19 +72,26 @@ const SignIn = () => {
 
         <TouchableOpacity
           onPress={handleSignIn}
-          className="mt-5 bg-[#FF6C22] rounded-full p-4 flex items-center justify-center"
+          style={{
+            marginTop: 20,
+            backgroundColor: '#FF6C22',
+            borderRadius: 50,
+            paddingVertical: 12,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
           disabled={loading}
         >
-          <Text className="text-white text-lg font-JakartaSemiBold">
+          <Text style={{ color: 'white', fontSize: 18, fontWeight: '600' }}>
             {loading ? "Завантаження..." : "Увійти"}
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push("/(auth)/sign-up")}
-          className="mt-5 flex items-center justify-center"
+          onPress={() => navigation.navigate('SignUp')}
+          style={{ marginTop: 20, alignItems: 'center' }}
         >
-          <Text className="text-[#FF6C22] text-lg font-JakartaSemiBold">
+          <Text style={{ color: '#FF6C22', fontSize: 18, fontWeight: '600' }}>
             Зареєструватися
           </Text>
         </TouchableOpacity>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image, Modal, StyleSheet, TouchableOpacity } from 'react-native';
-import { images } from '@/constants/index';
-import { icons } from '@/constants/svg';
+import { images } from '../../../constants/index';
+import { icons } from '../../../constants/svg';
 
 interface Dog {
   image?: string;

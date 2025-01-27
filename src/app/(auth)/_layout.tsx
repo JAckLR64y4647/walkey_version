@@ -1,12 +1,18 @@
-import { Stack } from 'expo-router';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
 
 const Layout = () => {
   return (
-      <Stack>
-        <Stack.Screen name="welcome" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-in" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-up" options={{ headerShown: false }} />
-      </Stack>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="welcome" component={() => null} />
+        <Stack.Screen name="sign-in" component={() => null} />
+        <Stack.Screen name="sign-up" component={() => null} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
