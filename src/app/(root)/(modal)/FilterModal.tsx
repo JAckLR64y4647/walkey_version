@@ -8,7 +8,7 @@ import {
   FlatList,
   Dimensions,
 } from "react-native";
-import { fetchDogBreeds } from "@/lib/fetchBreeds";
+import { fetchDogBreeds } from "../../../lib/fetchBreeds";
 
 const screenHeight = Dimensions.get("window").height;
 

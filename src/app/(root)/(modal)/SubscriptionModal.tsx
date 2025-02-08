@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { icons } from "@/constants/svg";
+import { icons } from "../../../constants/svg";
 
 interface SubscriptionModalProps {
   isVisible: boolean;

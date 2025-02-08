@@ -12,7 +12,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useUser } from "@clerk/clerk-expo";
 import * as ImagePicker from "expo-image-picker";
-import { icons } from "@/constants/svg";
+import { icons } from "../../../constants/svg";
 
 const SERVER_URL = "https://799d-93-200-239-96.ngrok-free.app";
 

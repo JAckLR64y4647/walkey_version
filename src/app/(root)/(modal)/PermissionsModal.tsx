@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import { Camera } from "expo-camera";
-import { icons } from "@/constants/svg";
+import { icons } from "../../../constants/svg";
 
 interface PermissionsModalProps {
   isVisible: boolean;

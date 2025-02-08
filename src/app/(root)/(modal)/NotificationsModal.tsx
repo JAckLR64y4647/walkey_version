@@ -9,7 +9,7 @@ import {
   Switch,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { icons } from "@/constants/svg";
+import { icons } from "../../../constants/svg";
 
 interface CustomCheckBoxProps {
   label: string;
