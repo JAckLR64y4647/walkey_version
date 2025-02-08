@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { icons } from "@/constants/svg";
+import { icons } from "../../../constants/svg";
 import { useUser } from "@clerk/clerk-expo";
-import GeneralModal from "@/app/(root)/(modal)/GeneralModal";
-import PermissionsModal from "@/app/(root)/(modal)/PermissionsModal";
-import NotificationsModal from "@/app/(root)/(modal)/NotificationsModal";
-import InviteFriendModal from "@/app/(root)/(modal)/InviteFriendModal";
-import FriendsModal from "@/app/(root)/(modal)/FriendsModal";
-import SubscriptionModal from "@/app/(root)/(modal)/SubscriptionModal";
+import GeneralModal from "../../../app/(root)/(modal)/GeneralModal";
+import PermissionsModal from "../../../app/(root)/(modal)/PermissionsModal";
+import NotificationsModal from "../../../app/(root)/(modal)/NotificationsModal";
+import InviteFriendModal from "../../../app/(root)/(modal)/InviteFriendModal";
+import FriendsModal from "../../../app/(root)/(modal)/FriendsModal";
+import SubscriptionModal from "../../../app/(root)/(modal)/SubscriptionModal";
 
 const SERVER_URL = "https://799d-93-200-239-96.ngrok-free.app";
 

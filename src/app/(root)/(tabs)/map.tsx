@@ -1,110 +1,33 @@
-import { View, Switch, Image, Text, Button, TouchableOpacity, Alert } from "react-native";
+import { View, Switch, Text, Button, TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
-import { icons } from "@/constants/svg";
-import * as Location from "expo-location";
+import { icons } from "../../../constants/svg";
+import Geolocation from "react-native-geolocation-service";
 import NetInfo from "@react-native-community/netinfo";
 import { Linking } from "react-native";
-import { images } from "@/constants/index";
-import { useLocationStore } from "@/store/index";
-import { useUser } from "@clerk/clerk-expo";
-import FilterModal from "@/app/(root)/(modal)/FilterModal";
-import DogProfileModal from "@/app/(root)/(modal)/DogProfile";
-
-const SERVER_URL = "https://799d-93-200-239-96.ngrok-free.app";
-
-type UpdateLocationParams = {
-  latitude: number;
-  longitude: number;
-  clerkId: string;
-};
-
-type Filters = Record<string, string>;
-
-const updateLocation = async ({ latitude, longitude, clerkId }: UpdateLocationParams): Promise<void> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-  try {
-    const response = await fetch(`${SERVER_URL}/api/user/location`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ clerkId, latitude, longitude }),
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Ошибка обновления локации:", errorData);
-      throw new Error(errorData.error || "Ошибка сервера");
-    }
-
-    console.log("Локация успешно обновлена!");
-  } catch (error: any) {
-    clearTimeout(timeoutId);
-    if (error.name === "AbortError") {
-      console.error("Запрос был прерван из-за тайм-аута.");
-    } else {
-      console.error("Ошибка обновления локации:", error);
-    }
-  }
-};
-
-const fetchWithTimeout = async (
-  url: string,
-  options: RequestInit = {},
-  timeout: number = 5000
-): Promise<Response> => {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-
-  try {
-    const response = await fetch(url, { ...options, signal: controller.signal });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    clearTimeout(id);
-    throw error;
-  }
-};
-
-const fetchOtherUsersLocations = async (clerkId: string, filters: Filters = {}): Promise<any[]> => {
-  try {
-    const queryParams = new URLSearchParams(filters).toString();
-    const response = await fetchWithTimeout(
-      `${SERVER_URL}/api/users/locations?clerkId=${clerkId}&${queryParams}`,
-      {}
-    );
-
-    if (!response.ok) {
-      throw new Error("Ошибка получения данных пользователей");
-    }
-
-    return await response.json();
-  } catch (error: any) {
-    console.error("Ошибка получения данных других пользователей:", error.message || error);
-    return [];
-  }
-};
+import { useLocationStore } from "../../../store/index";
+import { useUser } from "@clerk/clerk-react";
+import FilterModal from "../../../app/(root)/(modal)/FilterModal";
+import DogProfileModal from "../../../app/(root)/(modal)/DogProfile";
+import { updateLocation, fetchOtherUsersLocations } from "../../../lib/api";
+import { Filters } from "../../../types/type";
 
 const Map = () => {
-  const { userLatitude, userLongitude, setUserLocation } = useLocationStore();
+  const { setUserLocation } = useLocationStore();
   const [isToggled, setIsToggled] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const { user } = useUser();
   const [userName, setUserName] = useState<string>("Байт");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [isLoading, setLoading] = useState<boolean>(true);
   const [otherUsersLocations, setOtherUsersLocations] = useState<any[]>([]);
   const [filterModalVisible, setFilterModalVisible] = useState<boolean>(false);
   const [filters, setFilters] = useState<Filters>({});
   const [filtersApplied, setFiltersApplied] = useState<boolean>(false);
   const [selectedDog, setSelectedDog] = useState<any | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+
+  const SERVER_URL = "https://799d-93-200-239-96.ngrok-free.app";
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters((prevFilters) => ({
@@ -115,12 +38,6 @@ const Map = () => {
 
   const toggleFilterModal = () => {
     setFilterModalVisible(!filterModalVisible);
-  };
-
-  const openDogProfile = (dog: any) => {
-    console.log("Opening Dog Profile:", dog);
-    setSelectedDog(dog);
-    setIsModalVisible(true);
   };
 
   const closeDogProfile = () => {
@@ -191,41 +108,39 @@ const Map = () => {
 
   useEffect(() => {
     toggleConnectionListener();
-
     if (!isConnected) return;
-
+  
     (async () => {
       try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
+        const hasPermission = await Geolocation.requestAuthorization('whenInUse'); // Specify authorization level
+        if (hasPermission !== 'granted') {
           setErrorMsg("Доступ до розташування було відхилено");
           return;
         }
-
-        const lastKnownLocation = await Location.getLastKnownPositionAsync();
-        if (lastKnownLocation) {
-          setUserLocation({
-            latitude: lastKnownLocation.coords.latitude,
-            longitude: lastKnownLocation.coords.longitude,
-            address: "Последний известный адрес",
-          });
-        }
-
-        const userLocation = await Location.getCurrentPositionAsync({});
-        setUserLocation({
-          latitude: userLocation.coords.latitude,
-          longitude: userLocation.coords.longitude,
-          address: "Ваша адреса",
-        });
-
-        if (user && userLocation.coords.latitude && userLocation.coords.longitude) {
-          updateLocation({ latitude: userLocation.coords.latitude, longitude: userLocation.coords.longitude, clerkId: user.id });
-        }
-
-        if (user && user.id) {
-          const locations = await fetchOtherUsersLocations(user.id);
-          setOtherUsersLocations(locations);
-        }
+  
+        Geolocation.getCurrentPosition(
+          async (position) => {
+            setUserLocation({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              address: "Ваша адреса",
+            });
+  
+            if (user && position.coords.latitude && position.coords.longitude) {
+              await updateLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude, clerkId: user.id });
+            }
+  
+            if (user && user.id) {
+              const locations = await fetchOtherUsersLocations(user.id);
+              setOtherUsersLocations(locations);
+            }
+          },
+          (error) => {
+            console.error("Помилка при отриманні розташування", error);
+            setErrorMsg("Помилка при отриманні розташування");
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
       } catch (error) {
         console.error("Помилка при отриманні розташування", error);
         setErrorMsg("Помилка при отриманні розташування");
@@ -235,7 +150,7 @@ const Map = () => {
 
   if (errorMsg) {
     return (
-      <SafeAreaView className="flex-1 bg-white justify-center items-center">
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center' }}>
         <Text>{errorMsg}</Text>
         <Button title="Відкрити налаштування" onPress={() => Linking.openSettings()} />
       </SafeAreaView>
@@ -243,47 +158,44 @@ const Map = () => {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="flex-row justify-between items-center p-5">
-        <icons.WalkeyIcon width={22} height={22}/>
-        <View className="flex-row items-center ml-auto">
-          <Text className="ml-2 text-sm font-semibold">{userName} зараз </Text>
-          <View className="relative">
-              <Text className="text-sm font-semibold">{isToggled ? 'гуляє' : 'вдома'}</Text>
-              <View className="absolute left-0 right-0 bg-black" style={{ height: 2, bottom: -1 }} />
-            </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 20 }}>
+        <icons.WalkeyIcon width={22} height={22} />
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 'auto' }}>
+          <Text style={{ fontSize: 14, fontWeight: '600' }}>{userName} зараз </Text>
+          <View style={{ position: 'relative' }}>
+            <Text style={{ fontSize: 14, fontWeight: '600' }}>{isToggled ? 'гуляє' : 'вдома'}</Text>
+            <View style={{ position: 'absolute', left: 0, right: 0, backgroundColor: 'black', height: 2, bottom: -1 }} />
+          </View>
           <Switch
             value={isToggled}
             onValueChange={toggleSwitch}
             thumbColor={isToggled ? "#F15F15" : "#f4f3f4"}
             trackColor={{ false: "#FED9C6", true: "#FED9C6" }}
-            className="ml-2"
             style={{ marginRight: 12, transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
           />
         </View>
       </View>
       <TouchableOpacity
         onPress={toggleFilterModal}
-        className="absolute bg-white rounded-full shadow-lg flex flex-row justify-center items-center w-[180px]"
         style={{
-          top: 150,
-          right: 35,
+          position: 'absolute', backgroundColor: 'white', borderRadius: 50, shadowColor: '#000', shadowOpacity: 0.2, width: 180,
+          top: 150, right: 35, flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
         }}
       >
         <icons.FilterIcon width={24} height={24} style={{ paddingRight: 8 }} />
-        <Text className="text-center text-black text-[14px] pl-2">Фільтрувати</Text>
+        <Text style={{ textAlign: 'center', color: 'black', fontSize: 14, paddingLeft: 8 }}>Фільтрувати</Text>
       </TouchableOpacity>
 
       {filtersApplied && (
         <TouchableOpacity
           onPress={resetFilters}
-          className="absolute bg-red-500 rounded-full shadow-lg flex flex-row justify-center items-center w-[180px] h-[35px]"
           style={{
-            top: 200,
-            right: 35,
+            position: 'absolute', backgroundColor: '#F15F15', borderRadius: 50, shadowColor: '#000', shadowOpacity: 0.2, width: 180, height: 35,
+            top: 200, right: 35, flexDirection: 'row', justifyContent: 'center', alignItems: 'center',
           }}
         >
-          <Text className="text-center text-white text-[14px]">Скинути фільтр</Text>
+          <Text style={{ textAlign: 'center', color: 'white', fontSize: 14 }}>Скинути фільтри</Text>
         </TouchableOpacity>
       )}
 

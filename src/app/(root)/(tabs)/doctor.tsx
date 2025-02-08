@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AddVaccinationModal from '@/app/(root)/(modal)/AddVaccinationModal';
-import AddProtectionModal from '@/app/(root)/(modal)/AddProtectionModal';
-import SterilizationToggle from '@/components/SterilizationToggle';
-import { useUser } from '@clerk/clerk-expo';
-import { icons } from '@/constants/svg';
+import AddVaccinationModal from '../../../app/(root)/(modal)/AddVaccinationModal';
+import AddProtectionModal from '../../../app/(root)/(modal)/AddProtectionModal';
+import SterilizationToggle from '../../../components/SterilizationToggle';
+import { useUser } from '@clerk/clerk-react';
+import { icons } from '../../../constants/svg';
 
 type MedicalRecord = {
   id: number;
@@ -50,7 +50,7 @@ const Doctor = () => {
       const rawData: Array<{ id: number; name: string; lastdate: string; nextdate: string; type: string }> =
         await response.json();
   
-      console.log(`${type.toUpperCase()} raw data:`, rawData); // Вывод данных из API
+      console.log(`${type.toUpperCase()} raw data:`, rawData);
   
       const formattedData = rawData.map(record => ({
         id: record.id,
@@ -60,7 +60,7 @@ const Doctor = () => {
         type: record.type as 'vaccination' | 'protection',
       }));
   
-      console.log(`${type.toUpperCase()} formatted data:`, formattedData); // Вывод отформатированных данных
+      console.log(`${type.toUpperCase()} formatted data:`, formattedData);
   
       setData(formattedData);
     } catch (error) {
@@ -97,6 +97,7 @@ const Doctor = () => {
       Alert.alert('Ошибка', 'Не удалось добавить запись');
     }
   };
+
 
   const renderMedicalRecordHeader = () => (
     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8 }}>

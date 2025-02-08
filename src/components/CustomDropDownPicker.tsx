@@ -1,55 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import DropDownPicker, { DropDownPickerProps } from 'react-native-dropdown-picker';
+import React, { useState, useEffect } from "react";
+import DropDownPicker from 'react-native-dropdown-picker';
 
-type CustomDropDownPickerProps<T extends string | number | boolean> = DropDownPickerProps<T> & {
+type ItemType<T extends string | number | boolean> = { label: string; value: T };
+
+type CustomDropDownPickerProps<T extends string | number | boolean> = {
+  items: ItemType<T>[];
   placeholder?: string;
-  searchable?: boolean; 
+  searchable?: boolean;
 };
 
 const CustomDropDownPicker = <T extends string | number | boolean>({
-  placeholder = 'Выберите значение',
-  searchable = false, 
-  ...props
+  items,
+  placeholder = "Выберите значение",
+  searchable = false,
 }: CustomDropDownPickerProps<T>) => {
-  const [inputValue, setInputValue] = useState(''); 
-  const [filteredItems, setFilteredItems] = useState(props.items || []); 
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState("");
+  const [filteredItems, setFilteredItems] = useState<{ label: string; value: string }[]>([]);
+
+  useEffect(() => {
+    const formattedItems = items.map((item) => ({
+      label: item.label,
+      value: String(item.value), // Преобразуем value в строку
+    }));
+    setFilteredItems(formattedItems);
+  }, [items]);
 
   useEffect(() => {
     if (searchable) {
       const lowerCaseInput = inputValue.toLowerCase();
-      setFilteredItems(
-        (props.items || []).filter((item) =>
-          item.label?.toLowerCase().includes(lowerCaseInput)
-        )
+      setFilteredItems((prevItems) =>
+        prevItems.filter((item) => item.label.toLowerCase().includes(lowerCaseInput))
       );
     }
-  }, [inputValue, props.items, searchable]);
+  }, [inputValue, searchable]);
 
   return (
     <DropDownPicker
+      open={open}
+      value={selectedValue}
+      items={filteredItems}
+      setOpen={setOpen}
+      setValue={setSelectedValue}
+      onChangeValue={(value) => setSelectedValue(value)}
       placeholder={placeholder}
+      searchable={searchable}
+      searchPlaceholder="Поиск..."
+      onChangeSearchText={searchable ? setInputValue : undefined}
       maxHeight={200}
       style={{
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
+        backgroundColor: "transparent",
+        borderColor: "transparent",
         paddingHorizontal: 10,
         borderWidth: 0,
       }}
       placeholderStyle={{
-        color: 'black',
+        color: "black",
         fontSize: 18,
-        fontWeight: 'bold',
-        textAlign: 'left',
+        fontWeight: "bold",
+        textAlign: "left",
       }}
       textStyle={{
         fontSize: 18,
-        fontWeight: 'bold',
-        color: 'black',
+        fontWeight: "bold",
+        color: "black",
       }}
       dropDownContainerStyle={{
         borderWidth: 0,
-        backgroundColor: 'white',
-        boxShadow: 'rgba(0, 0, 0, 0.1)',
+        backgroundColor: "white",
+        shadowColor: "rgba(0, 0, 0, 0.1)",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
@@ -57,39 +77,21 @@ const CustomDropDownPicker = <T extends string | number | boolean>({
       }}
       listItemLabelStyle={{
         fontSize: 18,
-        fontWeight: '400',
+        fontWeight: "400",
         paddingVertical: 10,
       }}
       selectedItemContainerStyle={{
-        backgroundColor: '#f0f0f0',
+        backgroundColor: "#f0f0f0",
       }}
       arrowIconStyle={{
         width: 20,
         height: 20,
       }}
       arrowIconContainerStyle={{
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: "center",
+        alignItems: "center",
       }}
       showTickIcon={false}
-      {...props}
-      items={searchable ? filteredItems : props.items} 
-      searchTextInputProps={
-        searchable
-          ? {
-              style: {
-                height: '100%',
-                color: 'black',
-                fontSize: 18,
-                paddingHorizontal: 10,
-              },
-              value: inputValue,
-              placeholder: placeholder,
-              placeholderTextColor: 'gray',
-              onChangeText: setInputValue, 
-            }
-          : undefined
-      }
     />
   );
 };

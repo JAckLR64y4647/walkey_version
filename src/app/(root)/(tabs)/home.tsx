@@ -3,8 +3,8 @@ import { View, Text, ActivityIndicator, Image, ScrollView, Animated, TouchableOp
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Carousel from 'react-native-reanimated-carousel';
 import { useUser } from '@clerk/clerk-expo';
-import { icons } from "@/constants/svg";
-import { images } from "@/constants/index";
+import { icons } from "../../../constants/svg";
+import { images } from "../../../constants/index";
 import { useNavigation } from '@react-navigation/native';
 import DogProfileModal from "../../../app/(root)/(modal)/DogProfile";
 import { Dog, match_dogs, calculate_geographic_distance } from "@/dogMatching";

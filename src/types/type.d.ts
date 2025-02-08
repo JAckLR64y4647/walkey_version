@@ -33,6 +33,20 @@ export interface MarkerData {
     time?: number;
 }
 
+export type UpdateLocationParams = {
+    latitude: number;
+    longitude: number;
+    clerkId: string;
+  };
+
+  export type Filters = Record<string, string>;
+
+  export type UserLocation = {
+    latitude: number;
+    longitude: number;
+    address: string;
+  };
+
 export interface MapProps {
     destinationLatitude?: number;
     destinationLongitude?: number;

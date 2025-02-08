@@ -72,7 +72,6 @@ const convertClassNameToStyle = (className: string | undefined) => {
 };
 
 const CustomButton = ({
-  onPress,
   title,
   bgVariant = 'primary',
   textVariant = 'default',
@@ -83,7 +82,6 @@ const CustomButton = ({
 }: ButtonProps) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
       style={[
         styles.button,
         getBgVariantStyle(bgVariant),

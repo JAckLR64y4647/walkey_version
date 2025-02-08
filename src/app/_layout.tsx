@@ -1,6 +1,6 @@
 import React, { useEffect, Dispatch, SetStateAction } from 'react';
 import { View, Text } from 'react-native';
-import { ClerkProvider, ClerkLoaded, useUser } from '@clerk/clerk-react-native';
+import { ClerkProvider, ClerkLoaded, useUser, } from '@clerk/clerk-react';
 import SplashScreen from 'react-native-splash-screen';
 import { tokenCache } from '../lib/auth';
 
